@@ -1,6 +1,5 @@
 import * as cheerio from 'cheerio'
-import {v4} from "uuid";
-import {Element} from "cheerio";
+import * as uuid from "uuid";
 
 const $ = cheerio.load(document.getElementById('app')?.outerHTML);
 
@@ -25,7 +24,7 @@ function parseElement($element: cheerio.Element, jsonTree: Record<string, any>, 
                 jsonTree[tagName].text = childElement.data;
                 return;
             }
-            parseElement($(childElement)[0] as Element, jsonTree[tagName].children, $);
+            parseElement($(childElement)[0] as cheerio.Element, jsonTree[tagName].children, $);
         });
     }
 }
@@ -35,7 +34,7 @@ function parseElement($element: cheerio.Element, jsonTree: Record<string, any>, 
  * */
 $('body *').each((_, element) => {
     const $element = $(element);
-    const uniqueAttribute = `${v4()}`;
+    const uniqueAttribute = `${uuid.v4()}`;
     $element.attr('data-unique', uniqueAttribute);
 });
 (document.getElementById('app') as { outerHTML: string }).outerHTML = $.html();
