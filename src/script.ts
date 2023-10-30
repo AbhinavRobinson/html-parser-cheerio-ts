@@ -7,7 +7,6 @@ const $ = cheerio.load(document.getElementById('app')?.outerHTML);
 function parseElement($element: cheerio.Element, jsonTree: Record<string, any>, $: cheerio.CheerioAPI){
     // Get the tag name
     const tagName = `${$element.tagName}-${$element.attribs['data-unique']}`;
-    // const type = $element.type;
 
     // Initialize an object for this element
     jsonTree[tagName] = {};
@@ -18,19 +17,14 @@ function parseElement($element: cheerio.Element, jsonTree: Record<string, any>, 
         jsonTree[tagName].attributes = attributes;
     }
 
-    // Get the text content of the element
-    // if (type === 'text') {
-    //     const text = $element.data;
-    //     if (text) {
-    //         jsonTree[tagName].text = text;
-    //     }
-    // }
-
-    console.log(jsonTree)
     // Recursively process child elements
     if ($element.children.length > 0) {
         jsonTree[tagName].children = {};
         $element.children.forEach((childElement) => {
+            if(childElement.type === 'text'){
+                jsonTree[tagName].text = childElement.data;
+                return;
+            }
             parseElement($(childElement)[0] as Element, jsonTree[tagName].children, $);
         });
     }
